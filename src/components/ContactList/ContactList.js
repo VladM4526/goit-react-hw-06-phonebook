@@ -1,23 +1,32 @@
-import { ContactListItem } from "./ContactListItem";
-import { ContactListContainer } from "./ContactListStyles.styled";
-import propTypes from 'prop-types';
+import { ContactListItem } from './ContactListItem';
+import { ContactListContainer } from './ContactListStyles.styled';
+import { useDispatch, useSelector } from 'react-redux';
+import { deleteContact } from 'Redux/contactsSlice';
 
-export const ContactList = (props) => {
-    return (
-        <ContactListContainer>
-            {props.onGetText.map(items => (
-                <ContactListItem onDeleteContact={() => props.onDeleteContact(items.id)} item={items} key={items.id} />
-            ))}
-        </ContactListContainer>
- 
-    )
-}
+export const ContactList = () => {
+  const contacts = useSelector(state => state.contacts);
+  const search = useSelector(state => state.filter);
+  const dispatch = useDispatch();
 
-ContactList.propTypes = {
-    onDeleteContact: propTypes.func,
-    onGetText: propTypes.arrayOf(propTypes.shape({
-        id: propTypes.string,
-        name: propTypes.string,
-        number: propTypes.string
-    })).isRequired
- }
+  const onGetText = () => {
+    const normalizedFilter = search.toLowerCase().trim();
+    return contacts.filter(el => {
+      return el.name.toLowerCase().includes(normalizedFilter);
+    });
+  };
+  const deleteContacts = id => {
+    dispatch(deleteContact(id));
+  };
+
+  return (
+    <ContactListContainer>
+      {onGetText().map(items => (
+        <ContactListItem
+          onDeleteContact={() => deleteContacts(items.id)}
+          item={items}
+          key={items.id}
+        />
+      ))}
+    </ContactListContainer>
+  );
+};
