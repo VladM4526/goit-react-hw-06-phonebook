@@ -4,7 +4,8 @@ import { MdOutlinePhone } from 'react-icons/md';
 import { Form, FormInput, FormButton } from './BookContantsFormStyles.styled';
 import { useDispatch, useSelector } from 'react-redux';
 import { addContact } from 'Redux/contactsSlice';
-import { Notify } from 'notiflix/build/notiflix-notify-aio';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 import './BookContactFormStyles.css';
 
@@ -33,7 +34,9 @@ export const BookContactForm = () => {
       return item.name.trim() === name.trim();
     });
     if (checkNewContact) {
-      Notify.failure(`${name} is already in book contacts `);
+      toast.success(`${name} is already in book contacts `, {
+        position: toast.POSITION.TOP_RIGHT,
+      });
       return;
     }
     dispatch(addContact({ name, number }));
@@ -75,6 +78,7 @@ export const BookContactForm = () => {
           </div>
         </label>
         <FormButton type="submit">Add</FormButton>
+        <ToastContainer />
       </Form>
     </div>
   );
